@@ -1,0 +1,296 @@
+{
+  "entities": {
+    "user": {
+      "title": "User Profile",
+      "description": "Profil utilisateur pour étudiants et personnel.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "loginId": { "type": "string", "description": "Identifiant de connexion unique (ex: matricule)." },
+        "password": { "type": "string", "description": "Mot de passe temporaire ou permanent." },
+        "displayName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["student", "staff", "admin"] },
+        "department": { "type": "string" },
+        "level": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "profileCompleted": { "type": "boolean", "description": "Indique si l'utilisateur a complété son profil." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "loginId", "password", "role"]
+    },
+    "message": {
+      "title": "Message",
+      "description": "Message interne entre utilisateurs.",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string" },
+        "receiverId": { "type": "string" },
+        "text": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "read": { "type": "boolean" }
+      },
+      "required": ["senderId", "receiverId", "text", "timestamp"]
+    },
+    "grade": {
+      "title": "Grade",
+      "description": "Note académique d'un étudiant.",
+      "type": "object",
+      "properties": {
+        "studentId": { "type": "string" },
+        "subject": { "type": "string" },
+        "score": { "type": "number" },
+        "maxScore": { "type": "number" },
+        "semester": { "type": "string" },
+        "academicYear": { "type": "string" },
+        "verified": { "type": "boolean" },
+        "hash": { "type": "string" }
+      },
+      "required": ["studentId", "subject", "score", "maxScore"]
+    },
+    "attendance": {
+      "title": "Attendance",
+      "description": "Pointage numérique du personnel.",
+      "type": "object",
+      "properties": {
+        "staffId": { "type": "string" },
+        "type": { "type": "string", "enum": ["in", "out"] },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "location": {
+          "type": "object",
+          "properties": {
+            "latitude": { "type": "number" },
+            "longitude": { "type": "number" }
+          }
+        }
+      },
+      "required": ["staffId", "type", "timestamp"]
+    },
+    "announcement": {
+      "title": "Announcement",
+      "description": "Annonce sur le tableau d'affichage numérique.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "authorId": { "type": "string" },
+        "category": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content", "authorId", "timestamp"]
+    },
+    "post": {
+      "title": "Post",
+      "description": "Publication sur le fil d'actualités académique.",
+      "type": "object",
+      "properties": {
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "authorPhoto": { "type": "string" },
+        "content": { "type": "string" },
+        "category": { "type": "string", "enum": ["Annonce officielle", "Cours", "Urgent", "Général"] },
+        "isPinned": { "type": "boolean" },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "likes": { "type": "array", "items": { "type": "string" }, "description": "Liste des UIDs ayant liké." },
+        "reactions": { 
+          "type": "object", 
+          "properties": {
+            "utile": { "type": "array", "items": { "type": "string" } },
+            "important": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "url": { "type": "string" },
+              "type": { "type": "string" }
+            }
+          }
+        },
+        "media": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": { "type": "string" },
+              "type": { "type": "string", "enum": ["image", "video", "audio"] }
+            }
+          }
+        }
+      },
+      "required": ["authorId", "content", "createdAt"]
+    },
+    "comment": {
+      "title": "Comment",
+      "description": "Commentaire sur une publication.",
+      "type": "object",
+      "properties": {
+        "postId": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "authorPhoto": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "parentId": { "type": "string", "description": "ID du commentaire parent pour les threads." }
+      },
+      "required": ["postId", "authorId", "content", "createdAt"]
+    },
+    "notification": {
+      "title": "Notification",
+      "description": "Notification pour les interactions sociales.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "type": { "type": "string", "enum": ["like", "comment", "share"] },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "postId": { "type": "string" },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "type", "senderId", "createdAt"]
+    },
+    "chat": {
+      "title": "Chat",
+      "description": "Session de discussion entre participants.",
+      "type": "object",
+      "properties": {
+        "participants": { "type": "array", "items": { "type": "string" } },
+        "participantNames": { "type": "array", "items": { "type": "string" } },
+        "participantPhotos": { "type": "array", "items": { "type": "string" } },
+        "lastMessage": { "type": "string" },
+        "lastUpdate": { "type": "string", "format": "date-time" },
+        "type": { "type": "string", "enum": ["individual", "group"] },
+        "name": { "type": "string", "description": "Nom du groupe (si type group)" },
+        "photoURL": { "type": "string", "description": "Photo du groupe (si type group)" },
+        "unreadCount": { "type": "object", "description": "Map de UID vers nombre de messages non lus" },
+        "typing": { "type": "object", "description": "Map de UID vers statut d'écriture" },
+        "createdBy": { "type": "string" },
+        "admins": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["participants", "type"]
+    },
+    "chatMessage": {
+      "title": "Chat Message",
+      "description": "Message individuel dans une discussion.",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "text": { "type": "string" },
+        "type": { "type": "string", "enum": ["text", "audio", "image", "file"] },
+        "fileUrl": { "type": "string" },
+        "fileName": { "type": "string" },
+        "fileSize": { "type": "number" },
+        "duration": { "type": "number", "description": "Durée en secondes pour l'audio" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "readBy": { "type": "array", "items": { "type": "string" }, "description": "Liste des UIDs ayant lu le message" }
+      },
+      "required": ["senderId", "type", "createdAt"]
+    },
+    "call": {
+      "title": "Call",
+      "description": "Session d'appel vidéo ou audio.",
+      "type": "object",
+      "properties": {
+        "callerId": { "type": "string" },
+        "callerName": { "type": "string" },
+        "receiverId": { "type": "string" },
+        "type": { "type": "string", "enum": ["video", "audio"] },
+        "status": { "type": "string", "enum": ["ringing", "active", "ended", "missed"] },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "endedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["callerId", "receiverId", "type", "status", "startedAt"]
+    },
+    "academicDocument": {
+      "title": "Academic Document",
+      "description": "Document académique (syllabus, cours, recherche).",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "url": { "type": "string" },
+        "type": { "type": "string", "enum": ["syllabus", "course", "research", "other"] },
+        "department": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["title", "authorId", "url", "type", "createdAt"]
+    },
+    "system": {
+      "title": "System Settings",
+      "description": "Paramètres critiques de la plateforme.",
+      "type": "object",
+      "properties": {
+        "inscriptionsOpen": { "type": "boolean" },
+        "maintenanceMode": { "type": "boolean" },
+        "maintenanceMessage": { "type": "string" },
+        "accessLimitation": { "type": "string", "enum": ["all", "staff", "admin"] },
+        "autoBackup": { "type": "boolean" },
+        "backupFrequency": { "type": "string", "enum": ["daily", "weekly"] },
+        "twoFactorAuth": { "type": "boolean" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "user",
+      "description": "Profils des utilisateurs."
+    },
+    "/messages/{messageId}": {
+      "schema": "message",
+      "description": "Messages privés."
+    },
+    "/grades/{gradeId}": {
+      "schema": "grade",
+      "description": "Notes académiques."
+    },
+    "/attendance/{attendanceId}": {
+      "schema": "attendance",
+      "description": "Registres de présence du personnel."
+    },
+    "/announcements/{announcementId}": {
+      "schema": "announcement",
+      "description": "Annonces publiques."
+    },
+    "/posts/{postId}": {
+      "schema": "post",
+      "description": "Publications du fil d'actualités."
+    },
+    "/posts/{postId}/comments/{commentId}": {
+      "schema": "comment",
+      "description": "Commentaires sur les publications."
+    },
+    "/notifications/{notificationId}": {
+      "schema": "notification",
+      "description": "Notifications utilisateur."
+    },
+    "/chats/{chatId}": {
+      "schema": "chat",
+      "description": "Sessions de chat."
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+      "schema": "chatMessage",
+      "description": "Messages dans les chats."
+    },
+    "/documents/{documentId}": {
+      "schema": "academicDocument",
+      "description": "Documents académiques partagés."
+    },
+    "/calls/{callId}": {
+      "schema": "call",
+      "description": "Sessions d'appels."
+    },
+    "/system/config": {
+      "schema": "system",
+      "description": "Configuration globale du système."
+    }
+  }
+}

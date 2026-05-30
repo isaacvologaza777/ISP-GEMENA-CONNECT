@@ -1,0 +1,124 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (
+          (request.auth.token.email != null && (request.auth.token.email.lower() == "isaacvologaza777@gmail.com" || request.auth.token.email.lower() == "admin@isp-gemena.cd")) ||
+          (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'admin') ||
+          (request.auth.token.email != null && request.auth.token.email.lower().endsWith("@isp-gemena.cd") && 
+           exists(/databases/$(database)/documents/users/$(request.auth.token.email.lower().split("@")[0].upper())) &&
+           get(/databases/$(database)/documents/users/$(request.auth.token.email.lower().split("@")[0].upper())).data.get('role', '') == 'admin')
+        );
+    }
+
+    function getDocId() {
+      return (exists(/databases/$(database)/documents/user_mappings/$(request.auth.uid)) 
+            ? get(/databases/$(database)/documents/user_mappings/$(request.auth.uid)).data.get('matricule', request.auth.uid)
+            : (
+                (request.auth.token.email != null && request.auth.token.email.lower().endsWith("@isp-gemena.cd"))
+                ? (
+                    (request.auth.token.email.lower().split("@")[0].matches("^(etu|per|adm)[0-9]+.*") || request.auth.token.email.lower().split("@")[0] == "admin")
+                    ? request.auth.token.email.lower().split("@")[0].upper()
+                    : request.auth.uid
+                  )
+                : request.auth.uid
+              )
+      );
+    }
+
+    function isChatParticipant(chatId) {
+      return isAuthenticated() && 
+             (isAdmin() || 
+              (exists(/databases/$(database)/documents/chats/$(chatId)) && 
+               (request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.get('participants', []) ||
+                getDocId() in get(/databases/$(database)/documents/chats/$(chatId)).data.get('participants', []))));
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && (request.auth.uid == userId || getDocId() == userId);
+    }
+
+    match /user_mappings/{authUid} {
+      allow read, write: if isAuthenticated() && request.auth.uid == authUid;
+    }
+    
+    match /users/{userId} {
+      allow read: if true;
+      allow create, update: if isAdmin() || (isAuthenticated() && isOwner(userId));
+      allow delete: if isAdmin();
+    }
+
+    match /posts/{postId} {
+      allow read: if true;
+      allow create, update: if isAuthenticated();
+      allow delete: if isAuthenticated() && (isOwner(resource.data.authorId) || isAdmin());
+
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create, update: if isAuthenticated();
+        allow delete: if isAuthenticated() && (isOwner(resource.data.authorId) || isAdmin());
+      }
+    }
+
+    match /notifications/{notificationId} {
+      allow read, write: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid);
+    }
+
+    match /chats/{chatId} {
+      allow read: if isAuthenticated() && 
+                    (isAdmin() || 
+                     request.auth.uid in resource.data.get('participants', []) || 
+                     getDocId() in resource.data.get('participants', []) ||
+                     (resource.data.get('isGroup', false) == true && 
+                      (resource.data.get('groupType', '') == 'all' || 
+                       (resource.data.get('groupType', '') == 'personnel' && (isAdmin() || (exists(/databases/$(database)/documents/users/$(getDocId())) && get(/databases/$(database)/documents/users/$(getDocId())).data.get('role', '') == 'personnel'))) ||
+                       (resource.data.get('groupType', '') == 'students' && (isAdmin() || (exists(/databases/$(database)/documents/users/$(getDocId())) && get(/databases/$(database)/documents/users/$(getDocId())).data.get('role', '') == 'student')))
+                      )
+                     )
+                    );
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && 
+                      (isAdmin() || 
+                       request.auth.uid in resource.data.get('participants', []) || 
+                       getDocId() in resource.data.get('participants', []) ||
+                       (resource.data.get('isGroup', false) == true && isAdmin()));
+      allow delete: if isAdmin();
+
+      match /messages/{messageId} {
+        allow read, update: if isAuthenticated() && (isAdmin() || isChatParticipant(chatId));
+        allow create: if isAuthenticated() && (isAdmin() || isChatParticipant(chatId));
+        allow delete: if isAdmin();
+      }
+    }
+
+    match /calls/{callId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /grades/{gradeId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /attendance/{attendanceId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /announcements/{announcementId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /system/config {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

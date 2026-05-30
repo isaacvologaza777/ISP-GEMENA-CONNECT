@@ -1,0 +1,9 @@
+{
+  "name": "ISP Gemena Connect",
+  "description": "Plateforme éducative intégrée pour l'ISP Gemena (RDC). Gestion académique, communication et RH avec support offline.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation",
+    "microphone"
+  ]
+}

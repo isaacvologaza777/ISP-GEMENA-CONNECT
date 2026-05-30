@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #6D28D9; /* Violet */
+  --color-secondary: #1E3A8A; /* Dark Blue */
+  --color-accent: #FBBF24; /* Yellow */
+  --color-background: #F8FAFC;
+  --color-surface: #FFFFFF;
+  
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-secondary antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+  
+  .glass-dark {
+    @apply bg-secondary/80 backdrop-blur-md border border-white/10;
+  }
+  
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .mobile-nav-item {
+    @apply flex flex-col items-center justify-center text-[10px] font-bold uppercase tracking-tighter transition-all duration-200;
+  }
+
+  .card-gradient {
+    @apply bg-gradient-to-br from-primary to-secondary;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}

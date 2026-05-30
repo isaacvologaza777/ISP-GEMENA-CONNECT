@@ -1,0 +1,32 @@
+247:        photoUrl: provider.photoURL
+470:              photoURL: u.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${docId}`,
+560:            photoURL: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Etudiant1',
+598:            photoURL: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Staff',
+685:          photoURL: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Visitor',
+1166:      authorPhoto: profile.photoURL,
+1215:        authorPhoto: profile.photoURL,
+1297:              <img src={profile.photoURL} className="w-14 h-14 rounded-[20px] object-cover ring-4 ring-slate-50 shadow-md" alt="" />
+1487:                    <img src={profile?.photoURL} className="w-10 h-10 rounded-xl object-cover" alt="" />
+1751:      authorPhoto: profile.photoURL,
+1773:        authorPhoto: profile.photoURL,
+2122:                  <img src={profile?.photoURL} className="w-10 h-10 rounded-xl object-cover ring-2 ring-slate-50" alt="" />
+2248:          <img src={profile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.uid}`} alt="Profile" referrerPolicy="no-referrer" />
+2342:        { id: 1, displayName: "Jean-Pierre Kabila", role: "student", departement: "Pédagogie", photoURL: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jean", bio: "Étudiant en G3 Pédagogie." },
+2343:        { id: 2, displayName: "Marie-Louise Mobutu", role: "staff", departement: "Administration", photoURL: "https://api.dicebear.com/7.x/avataaars/svg?seed=Marie", bio: "Secrétaire de direction." },
+2428:                <img src={res.photoURL || "https://picsum.photos/seed/user/100/100"} className="w-12 h-12 rounded-xl object-cover border border-slate-50" alt="" referrerPolicy="no-referrer" />
+2476:                    src={selectedProfile.photoURL || "https://picsum.photos/seed/user/200/200"} 
+2823:      participantPhotos: [profile.photoURL, otherUser.photoURL],
+3410:                    <img src={u.photoURL} className="w-12 h-12 rounded-xl object-cover" alt="" />
+3537:          photoURL: profile?.photoURL,
+3573:        await updateProfile({ photoURL: newPhotoUrl });
+3599:            <img src={profile?.photoURL} alt="Profile" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+3900:    // Add photoURL to calculation
+3901:    const hasPhoto = !!data.photoURL;
+3964:          photoURL: newPhotoUrl
+4067:                {currentLevelData.photoURL ? (
+4068:                  <img src={currentLevelData.photoURL} alt="Profile" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+4219:      photoURL: profile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`,
+4267:              <img src={msg.photoURL} className="w-8 h-8 rounded-lg object-cover bg-slate-100 self-end" alt="" />
+4768:        photoURL: `https://api.dicebear.com/7.x/avataaars/svg?seed=${generatedId}`,
+5297:                                <img src={u.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.id}`} alt="" />
+5379:                                <img src={u.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.id}`} alt="" />
